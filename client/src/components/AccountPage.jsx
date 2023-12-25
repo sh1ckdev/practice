@@ -8,12 +8,15 @@ import {
   Container,
   Button,
   Tooltip,
+  TextField
 } from "@mui/material";
-import { useContext, useState } from "react";
+import { useContext, useState,useEffect } from "react";
 import CopyAllOutlinedIcon from "@mui/icons-material/CopyAllOutlined";
-import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
+import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
+import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import { Context } from "../index";
 import { observer } from "mobx-react-lite";
+import Web3 from "web3";
 
 const FullWidthImage = styled("img")({
   display: "block",
@@ -25,19 +28,89 @@ const AvatarContainer = styled(Box)({
   position: "relative",
 });
 
+
 const AccountPage = () => {
+  const [accountAddress, setAccountAddress] = useState('');
+  const [accountAddressSlice, setAccountAddressSlice] = useState('');
+  const [accountBalance, setAccountBalance] = useState('');
+  const [editedBio, setEditedBio] = useState("React developer with big plans");
+  const [isMetamaskConnected, setIsMetamaskConnected] = useState(false);
+  const [isEditingBio, setIsEditingBio] = useState(false);
   const { store } = useContext(Context);
-  const [content, setContent] = useState(
-    "0xD9832DAF0DE29dFA770e41bf8Ef326f20A6F850F"
-  );
   const [tooltipText, setTooltipText] = useState("Нажмите чтобы скопировать");
 
-  const handleCopyClick = () => {
-    navigator.clipboard.writeText(content);
-    setTooltipText("Скопировано");
+  const handleConnectMetamask = async () => {
+    try {
+      if (window.ethereum) {
+        await window.ethereum.request({ method: 'eth_requestAccounts' });
+        setIsMetamaskConnected(true);
+      } else {
+        console.error('Metamask not detected. Please install Metamask.');
+      }
+    } catch (error) {
+      console.error('Error connecting to Metamask:', error.message);
+    }
   };
 
-  const shortenedContent = `${content.slice(0, 6)}...${content.slice(-4)}`;
+  useEffect(() => {
+    const checkMetamaskConnection = async () => {
+      try {
+        if (window.ethereum) {
+          window.web3 = new Web3(window.ethereum);
+
+          const accounts = await window.web3.eth.getAccounts();
+          if (accounts.length > 0) {
+            const selectedAccount = accounts[0];
+            
+            const address = selectedAccount;
+
+            const truncatedAddress =
+              address.substring(0, 5) +
+              '...' +
+              address.slice(-3);
+            setAccountAddressSlice(truncatedAddress);
+
+            const balance = await window.web3.eth.getBalance(selectedAccount);
+            const formattedBalance = window.web3.utils.fromWei(
+              balance,
+              'ether'
+            );
+
+            setAccountBalance(formattedBalance);
+            setAccountAddress(address);
+            setIsMetamaskConnected(true);
+
+          } else {
+            console.log('Metamask not connected.');
+            setIsMetamaskConnected(false);
+          }
+        } else {
+          console.error('Metamask not detected. Please install Metamask.');
+        }
+      } catch (error) {
+        console.error('Error checking Metamask connection:', error.message);
+      }
+    };
+
+    checkMetamaskConnection();
+  }, []);
+
+
+  const handleCopyClick = () => {
+    navigator.clipboard.writeText(accountAddress);
+    setTooltipText('Скопировано');
+  };
+
+
+  const handleEditBio = () => {
+    setIsEditingBio(true);
+  };
+
+  const handleSaveBio = () => {
+    console.log("Bio saved:", editedBio);
+
+    setIsEditingBio(false);
+  };
 
   return (
     <div>
@@ -69,15 +142,51 @@ const AccountPage = () => {
             }}
           >
             <Box sx={{ marginTop: 3 }}>
+            
               <Typography fontWeight={600} fontSize={40}>{store.user.username}</Typography>
-              <Typography fontWeight={600} fontSize={25}>{store.user.email}</Typography>
-              <Typography color="secondary" fontWeight={600} fontSize={23}>
-                Bio
+              <Typography fontWeight={600} fontSize={25} marginTop={2}>
+              <Typography component="span" color="secondary" fontWeight={600} fontSize={23}>
+                Email:
+              </Typography> {store.user.email}</Typography>
+              <Typography color="secondary" fontWeight={600} fontSize={23} marginTop={3}>
+                Bio: 
               </Typography>
-              <Typography>react developer with big plans</Typography>
+              {isEditingBio ? (
+            <>
+                      <TextField
+                type="text"
+                value={editedBio}
+                onChange={(e) => setEditedBio(e.target.value)}
+                sx={{backgroundColor: "grey"}}
+          />
+              <Button variant="contained" onClick={handleSaveBio}>
+                Save
+              </Button>
+            </>
+          ) : (
+            <Box sx={{display: 'flex'}}>
+              <Typography>{editedBio}</Typography>
+                <Typography
+                  onClick={handleEditBio}
+                  sx={{marginLeft: 1}}
+                >
+                  <EditOutlinedIcon color="primary" /> 
+                </Typography>
+            </Box>
+          )}
             </Box>
             <Box sx={{ marginTop: 3 }}>
               <Box sx={{ display: "flex", gap: 2 }}>
+              {isMetamaskConnected  ? (
+                <>
+              <Button
+                    variant="outlined"
+                    sx={{ display: "flex", gap: 1, overflow: "hidden", borderColor: "#1DCB68!important", color: "#1DCB68" }}
+                  >
+                    <AccountBalanceWalletIcon />
+                    {accountBalance}0 ETH
+                    
+                  </Button>
                 <Tooltip title={tooltipText} arrow>
                   <Button
                     variant="contained"
@@ -85,27 +194,26 @@ const AccountPage = () => {
                     sx={{ display: "flex", gap: 1, overflow: "hidden" }}
                   >
                     <CopyAllOutlinedIcon />
-                    <div
-                      style={{
-                        overflow: "hidden",
-                        textOverflow: "ellipsis",
-                        whiteSpace: "nowrap",
-                      }}
-                    >
-                      {shortenedContent}
-                    </div>
+                    {accountAddressSlice}
+                    
                   </Button>
                 </Tooltip>
-                <Button variant="outlined">
-                  <AddOutlinedIcon />
-                  Follow
-                </Button>
+                </>
+                ) : null}
+                <Button
+            id="connectButton"
+            variant="contained"
+            onClick={handleConnectMetamask}
+            style={{ display: isMetamaskConnected ? 'none' : 'block' }}
+          >
+            Connect to Metamask
+          </Button>
               </Box>
             </Box>
           </Container>
         </Container>
       ) : (
-        <p>User not authenticated</p>
+        <h1>User not authenticated</h1>
       )}
     </div>
   );

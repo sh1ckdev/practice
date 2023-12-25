@@ -3,7 +3,6 @@ const bcrypt = require('bcrypt');
 const tokenService = require('./token-service');
 const UserDto = require('../dtos/user-dto');
 const ApiError = require('../exceptions/api-error'); 
-const TokenModel = require('../models/token-model');
 
 class UserService {
     async registration(username, email, password) {
@@ -45,30 +44,21 @@ class UserService {
         const token = await tokenService.removeToken(refreshToken)
         return token
     }
-
-    async removeToken(refreshToken){
-        const tokenData = await TokenModel.deleteOne({refreshToken})
-        return tokenData
-    }
-
-    async refresh(refreshToken){
+    async refresh(refreshToken) {
         if (!refreshToken) {
-            throw ApiError.UnauthorizedError()
+            throw ApiError.UnauthorizedError();
         }
-        const userData = tokenService.validateRefreshToken(refreshToken)
-        const tokenFromDb = await tokenService.findToken(refreshToken)
+        const userData = tokenService.validateRefreshToken(refreshToken);
+        const tokenFromDb = await tokenService.findToken(refreshToken);
         if (!userData || !tokenFromDb) {
-            throw ApiError.UnauthorizedError()
+            throw ApiError.UnauthorizedError();
         }
-        const user = await UserModel.findById(userData.id)
-        const userDto = new UserDto(user)
-        const tokens = tokenService.generateTokens({...userDto})
-        await tokenService.saveToken(userDto.id, tokens.refreshToken);
+        const user = await UserModel.findById(userData.id);
+        const userDto = new UserDto(user);
+        const tokens = tokenService.generateTokens({...userDto});
 
-        return {
-            ...tokens,
-            user: userDto
-        };
+        await tokenService.saveToken(userDto.id, tokens.refreshToken);
+        return {...tokens, user: userDto}
     }
 }
 

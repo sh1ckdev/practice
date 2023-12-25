@@ -49,7 +49,7 @@ const Main = () => {
             The NET marketplace user interface created by <Typography component="span" color='primary' fontWeight={500} fontSize={20}>sh1ckdev</Typography>. Collect, buy and sell works of art by more than 20 thousand NFT artists.
           </Typography>
           </Box>
-          <StyledLink to="/auth">
+          <StyledLink to="/register">
             <Button
               color="primary"
               variant="contained"

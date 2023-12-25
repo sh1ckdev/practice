@@ -40,6 +40,13 @@ const theme = createTheme({
         },
       }
     },
+    MuiInputBase: {
+      styleOverrides: {
+        root: {
+          padding: "0!important", 
+        }
+      }
+    },
     MuiOutlinedInput: {
       styleOverrides: {
         root: {

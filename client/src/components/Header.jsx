@@ -1,12 +1,13 @@
 import { AppBar, Toolbar, Container, Box, Button } from "@mui/material";
 import { styled } from "@mui/system";
-import { NavLink, Link } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import Logo from "../assets/images/logo.svg";
 import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
 import LogoutIcon from '@mui/icons-material/Logout';
 import { useContext } from "react";
 import { Context } from "../index";
 import { observer } from "mobx-react-lite";
+
 
 const CustomAppBar = styled(AppBar)({
   backgroundColor: "#2B2B2B",
@@ -24,7 +25,7 @@ const StyledLink = styled(NavLink)({
   },
 });
 
-const MuiLink = styled(Link)({
+const MuiLink = styled(NavLink)({
   textDecoration: "none",
   color: "#FFFFFF",
   fontSize: "16px",
@@ -33,6 +34,7 @@ const MuiLink = styled(Link)({
 
 const Header = () => {
   const { store } = useContext(Context);
+
   return (
     <CustomAppBar position="static">
       <Container maxWidth="xl">
@@ -54,7 +56,7 @@ const Header = () => {
             <StyledLink to="/account">Connect a wallet</StyledLink>
             {store.isAuth ? (
               <Box sx={{ display: "flex", flexDirection: "row" }}>
-                <MuiLink  to="/account">
+                <MuiLink  to={`/account/${store.user.username}`}>
                   <Button
                     color="primary"
                     variant="outlined"

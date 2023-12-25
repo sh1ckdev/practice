@@ -2,6 +2,7 @@ const UserService = require('../service/user-service')
 const {validationResult} = require ('express-validator')
 const ApiError = require('../exceptions/api-error')
 const userService = require('../service/user-service')
+const UserModel = require('../models/user-modal')
 
 class UserController {
     async registration(req, res, next){
@@ -41,15 +42,14 @@ class UserController {
             next(e)
         }
     }
-    async refresh(req, res, next){
+    async refresh(req, res, next) {
         try {
-            const {refreshToken} = req.body
-            const userData = await UserService.refresh(refreshToken)
+            const {refreshToken} = req.cookies;
+            const userData = await userService.refresh(refreshToken);
             res.cookie('refreshToken', userData.refreshToken, {maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true})
-
-            return res.json(userData)
+            return res.json(userData);
         } catch (e) {
-            next(e)
+            next(e);
         }
     }
     async getUsers(req, res, next){

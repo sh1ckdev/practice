@@ -16,24 +16,26 @@ function App() {
   const {store} = useContext(Context)
 
   useEffect(() => {
-    if (localStorage.getItem('token')) {
-      store.checkAuth()
-    }
-  }, [store])
+      if (localStorage.getItem('token')) {
+         store.checkAuth();
+      }
+  }, [store]);
 
   return (
     <>
+    <Context.Provider value={{ store }}>
       <ThemeProvider theme={theme}>
         <Router>  
           <CssBaseline />
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/register" element={<Reg />} />
-            <Route path="/account" element={<Account />} />
+            <Route path={`/account/${store.user.username}`} element={<Account />} />
             <Route path="/login" element={<Auth />} />
           </Routes>
         </Router>
       </ThemeProvider>
+      </Context.Provider>
     </>
   );
 }

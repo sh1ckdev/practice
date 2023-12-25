@@ -14,17 +14,17 @@ import { useContext, useState } from "react";
 import { Context } from "../index";
 import { useNavigate } from "react-router-dom";
 
-const Register = () => {
+const Authorize = () => {
   const { store } = useContext(Context);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
-  const navigate = useNavigate(); // Add this line
+  const navigate = useNavigate(); 
 
-  const handleCreateAccount = async () => {
+  const handleLoginAccount = async () => {
     await store.login(username, password);
     if (store.isAuth) {
-      navigate("/account"); // Replace '/profile' with the actual path of your profile page
+      navigate(`/account/${username}`); 
     }
   };
   return (
@@ -96,7 +96,7 @@ const Register = () => {
           <Button
             onClick={() => {
               store.login(username, password);
-              handleCreateAccount();
+              handleLoginAccount();
             }}
             color="primary"
             variant="contained"
@@ -110,4 +110,4 @@ const Register = () => {
   );
 };
 
-export default Register;
+export default Authorize;
