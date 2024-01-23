@@ -95,6 +95,11 @@ const Creators = () => {
             <UserCard key={index} {...user} />
           ))}
         </Box>
+
+<telegram>
+  <sh1ckdev/>
+</telegram>
+
       </Container>
     </div>
   );
