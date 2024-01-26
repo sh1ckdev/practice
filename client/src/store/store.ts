@@ -4,11 +4,18 @@ import AuthService from "../services/AuthService";
 import axios from "axios";
 import { API_URL } from "../http";
 import { AuthResponse } from "../models/response/AuthResponse";
+import { IReviews } from "../models/IReview";
+import ReviewService from "../services/ReviewService";
+import { runInAction } from 'mobx';
+// import { ReviewResponse } from './../models/response/ReviewResponse';
 
 
 export default class Store {
     user = {} as IUser;
+    review = {} as IReviews
     isAuth = false;
+    users: IUser[] = [];
+    reviews: IReviews[] = [];
 
     constructor() {
         makeAutoObservable(this);
@@ -49,7 +56,7 @@ export default class Store {
 
     async logout() {
         try {
-            const response = await AuthService.logout();
+            await AuthService.logout();
             localStorage.removeItem('token');
             this.setAuth(false);
             this.setUser({} as IUser);
@@ -65,5 +72,43 @@ export default class Store {
             this.setUser(response.data.user);
         } catch (e) {
         } 
+    }
+
+    async getUsers() {
+        try {
+            const response = await axios.get<IUser[]>(`${API_URL}/users`);
+            this.users = response.data;
+        } catch (e) {
+            console.error("Ошибка получения пользователей:", e);
+        }
+    }
+
+    async addReview(username: string, text: string, rating: number) {
+        try {
+            await ReviewService.addReview(username, text, rating);
+            this.getReviews();
+        } catch (error) {
+            console.error("Ошибка при добавлении отзыва:", error);
+        }
+    }
+
+    async deleteReview(username: string, reviewId: string){
+        try {
+            await ReviewService.deleteReview(reviewId, username)
+            this.getReviews();
+        } catch (error) {
+            console.error("Ошибка при удалении отзыва:", error);
+        }
+    }
+
+    async getReviews() {
+        try {
+            const response = await axios.get<IReviews[]>(`${API_URL}/reviews`);
+            runInAction(() => {
+                this.reviews = response.data;
+            }); 
+            } catch (error) {
+            
+        }
     }
 }

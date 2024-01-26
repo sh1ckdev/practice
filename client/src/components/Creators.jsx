@@ -8,6 +8,8 @@ import {
 } from "@mui/material";
 import { Box } from "@mui/system";
 import RocketLaunchOutlinedIcon from "@mui/icons-material/RocketLaunchOutlined";
+import { Context } from "../index";
+import { useContext, useEffect, useState } from "react";
 
 const UserCard = ({ username, avatar }) => {
   return (
@@ -31,18 +33,24 @@ const UserCard = ({ username, avatar }) => {
   );
 };
 
-const users = [
-  { username: "Keepitreal", avatar: require("../assets/images/Avatar1.png") },
-  { username: "DigiLab", avatar: require("../assets/images/Avatar2.png") },
-  { username: "GravityOne", avatar: require("../assets/images/Avatar3.png") },
-  { username: "Juanie", avatar: require("../assets/images/Avatar4.png") },
-  { username: "BlueWhale", avatar: require("../assets/images/Avatar4.png") },
-  { username: "Mr Fox", avatar: require("../assets/images/Avatar3.png") },
-  { username: "Shroomie", avatar: require("../assets/images/Avatar2.png") },
-  { username: "Robotica", avatar: require("../assets/images/Avatar1.png") },
-];
-
 const Creators = () => {
+  const [usersArray, setUsersArray] = useState([]);
+  const { store } = useContext(Context);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        await store.getUsers();
+        const usersArray = Object.values(store.users).map(user => ({
+          username: user,
+        }));
+        setUsersArray(usersArray)
+      } catch (error) {
+        console.error("Error fetching users:", error);
+      }
+    };
+
+    fetchData();
+  }, [store]);
   return (
     <div>
       <Container sx={{ marginY: 15 }}>
@@ -91,7 +99,7 @@ const Creators = () => {
             marginTop: 4,
           }}
         >
-          {users.map((user, index) => (
+          {usersArray.map((user, index) => (
             <UserCard key={index} {...user} />
           ))}
         </Box>

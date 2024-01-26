@@ -52,7 +52,7 @@ const Header = () => {
           </Box>
           <Box sx={{ display: "flex", alignItems: "center" }}>
             <StyledLink to="/">Marketplace</StyledLink>
-            <StyledLink to="/account">Rankings</StyledLink>
+            <StyledLink to="/reviews">Reviews</StyledLink>
             <StyledLink to="/account">Connect a wallet</StyledLink>
             {store.isAuth ? (
               <Box sx={{ display: "flex", flexDirection: "row" }}>
@@ -68,7 +68,7 @@ const Header = () => {
                     }}
                   >
                     <PersonOutlineIcon />
-                    Profile
+                    Profile {store.user.username}
                   </Button>
                 </MuiLink>
                 <MuiLink sx={{textDecoration: 'none'}} to="/register">

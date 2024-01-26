@@ -17,8 +17,8 @@ class UserController {
             res.cookie('refreshToken', userData.refreshToken, {maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true})
 
             return res.json(userData)
-        } catch (e) {
-            next(e)
+        } catch (error) {
+            next(error)
         }
     }
     async login(req, res, next){
@@ -28,8 +28,8 @@ class UserController {
             res.cookie('refreshToken', userData.refreshToken, {maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true})
 
             return res.json(userData)
-        } catch (e) {
-            next(e)
+        } catch (error) {
+            next(error)
         }
     }
     async logout(req, res, next){
@@ -38,8 +38,8 @@ class UserController {
             const token = await userService.logout(refreshToken)
             res.clearCookie('refreshToken')
             return res.json(token)
-        } catch (e) {
-            next(e)
+        } catch (error) {
+            next(error)
         }
     }
     async refresh(req, res, next) {
@@ -48,17 +48,17 @@ class UserController {
             const userData = await userService.refresh(refreshToken);
             res.cookie('refreshToken', userData.refreshToken, {maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true})
             return res.json(userData);
-        } catch (e) {
-            next(e);
+        } catch (error) {
+            next(error);
         }
     }
     async getUsers(req, res, next) {
         try {
-            const users = await UserModel.find();
-
-            res.json(users);
-        } catch (e) {
-            next(e);
+            const users = await UserModel.find({}, 'username');
+            const usernames = users.map(user => user.username);
+            res.json(usernames);
+        } catch (error) {
+            next(error);
         }
     }
 }

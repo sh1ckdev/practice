@@ -21,8 +21,28 @@ const theme = createTheme({
     fontWeightRegular: 400,
     fontWeightMedium: 500,
     fontWeightBold: 700,
+    
   },
   components: {
+    MuiRating: {
+      styleOverrides: {
+        iconEmpty: {
+          color: 'white',
+        },
+        readOnly: {
+          '& .MuiRating-iconEmpty': {
+            display: 'none',
+          },
+        },
+      },
+    },
+    MuiTypography: {
+      styleOverrides: {
+        root: {
+          whiteSpace: 'normal!important'
+        }
+      }
+    },
     MuiButton: {
         styleOverrides: {
           root: {
@@ -43,7 +63,7 @@ const theme = createTheme({
     MuiInputBase: {
       styleOverrides: {
         root: {
-          padding: "0!important", 
+          // padding: "0!important", 
         }
       }
     },
@@ -61,6 +81,9 @@ const theme = createTheme({
         input: {
           color: '#000',
           padding: '13px 20px',
+          // '&#whiteInput': {
+          //   color: '#fff',
+          // },
         },
         notchedOutline: {
           borderRadius: '20px',

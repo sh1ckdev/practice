@@ -6,6 +6,7 @@ import Account from "./pages/Account/Account.jsx";
 import Home from "./pages/Home/Home.jsx";
 import Auth from './pages/Auth/Auth.jsx';
 import Reg from './pages/Auth/Reg.jsx';
+import Reviews from "./pages/Reviews/Reviews.jsx";
 import { useContext, useEffect } from "react";
 import { Context } from "./index";
 import { observer } from "mobx-react-lite";
@@ -32,6 +33,7 @@ function App() {
             <Route path="/register" element={<Reg />} />
             <Route path={`/account/${store.user.username}`} element={<Account />} />
             <Route path="/login" element={<Auth />} />
+            <Route path="/reviews" element={<Reviews/>} />
           </Routes>
         </Router>
       </ThemeProvider>

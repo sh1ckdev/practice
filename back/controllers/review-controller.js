@@ -1,4 +1,3 @@
-// review-controller.js
 const { validationResult } = require('express-validator');
 const ApiError = require('../exceptions/api-error');
 const reviewService = require('../service/review-service');
@@ -13,10 +12,6 @@ class ReviewController {
 
             const { username } = req.user;
             const { text, rating } = req.body;
-            console.log('User nickname:', req.user.username);
-            console.log('Review text:', text);
-            console.log('Review rating:', rating);
-
             const reviewData = await reviewService.addReview(username, text, rating);
 
             return res.json(reviewData);
@@ -25,13 +20,34 @@ class ReviewController {
         }
     }
 
+    async deleteReview(req, res, next) {
+        try {
+            const { username } = req.user;
+            const { reviewId } = req.params;
+            const existingReview = await reviewService.getReviewById(reviewId);
+            if (!existingReview) {
+                return next(ApiError.NotFound('Отзыв не найден'));
+            }
+            if (existingReview.username !== username) {
+                return next(ApiError.Forbidden('Недостаточно прав для удаления этого отзыва'));
+            }
+    
+            await reviewService.deleteReview(reviewId);
+    
+            return res.json({ message: 'Отзыв успешно удален' });
+        } catch (error) {
+            next(error);
+        }
+    }
+    
+
     async getAllReviews(req, res, next) {
         try {
             const reviews = await reviewService.getAllReviews();
 
             return res.json(reviews);
-        } catch (e) {
-            next(e);
+        } catch (error) {
+            next(error);
         }
     }
 }

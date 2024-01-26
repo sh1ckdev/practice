@@ -8,6 +8,7 @@ class ReviewService {
             const review = await ReviewModel.create({ username, text, rating });
             return review;
         } catch (error) {
+            console.error('Ошибка при добавлении отзыва:', error);
             throw ApiError.BadRequest('Ошибка при добавлении отзыва');
         }
     }
@@ -17,7 +18,25 @@ class ReviewService {
             const reviews = await ReviewModel.find();
             return reviews;
         } catch (error) {
-            throw new ApiError.InternalServerError('Ошибка при получении отзывов');
+            throw  ApiError.InternalServerError('Ошибка при получении отзывов');
+        }
+    }
+
+    async getReviewById(reviewId) {
+        try {
+            const review = await ReviewModel.findById(reviewId);
+            return review;
+        } catch (error) {
+            throw  ApiError.InternalServerError('Ошибка при получении отзыва по ID');
+        }
+    }
+
+    async deleteReview(reviewId){
+        try {
+            const deletedReview = await ReviewModel.findByIdAndDelete(reviewId);
+            return deletedReview;
+        } catch (error) {
+            throw ApiError.BadRequest('Ошибка при удалении отзыва');
         }
     }
 }

@@ -81,6 +81,7 @@ const Authorize = () => {
           <TextField
             id="password"
             placeholder="Password"
+            type="password"
             variant="outlined"
             onChange={(e) => setPassword(e.target.value)}
             value={password}
