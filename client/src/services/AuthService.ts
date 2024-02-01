@@ -3,6 +3,7 @@ import $api from "../http";
 import { AuthResponse } from "../models/response/AuthResponse";
 
 export default class AuthService {
+
     static async login(username:  string, password: string): Promise<AxiosResponse<AuthResponse>>{
         return $api.post('/login', {username, password})
     }
@@ -13,5 +14,9 @@ export default class AuthService {
 
     static async logout(): Promise<void>{
         return $api.post('/logout')
+    }
+
+    static async updateProfile(userId: string, fieldsToUpdate: object): Promise<AxiosResponse<AuthResponse>>{
+        return $api.put(`/updateProfile/${userId}`, {fieldsToUpdate})
     }
 }

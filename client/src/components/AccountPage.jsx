@@ -8,15 +8,14 @@ import {
   Container,
   Button,
   Tooltip,
-  TextField
 } from "@mui/material";
 import { useContext, useState,useEffect } from "react";
 import CopyAllOutlinedIcon from "@mui/icons-material/CopyAllOutlined";
 import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
-import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import { Context } from "../index";
 import { observer } from "mobx-react-lite";
 import Web3 from "web3";
+import ProfileDialog from "./ProfileDialog";
 
 const FullWidthImage = styled("img")({
   display: "block",
@@ -33,11 +32,15 @@ const AccountPage = () => {
   const [accountAddress, setAccountAddress] = useState('');
   const [accountAddressSlice, setAccountAddressSlice] = useState('');
   const [accountBalance, setAccountBalance] = useState('');
-  const [editedBio, setEditedBio] = useState("React developer with big plans");
   const [isMetamaskConnected, setIsMetamaskConnected] = useState(false);
-  const [isEditingBio, setIsEditingBio] = useState(false);
   const { store } = useContext(Context);
   const [tooltipText, setTooltipText] = useState("Нажмите чтобы скопировать");
+  const [isDialogOpen, setDialogOpen] = useState(false);
+
+  const handleToggleDialog = () => {
+    setDialogOpen(!isDialogOpen);
+  };
+
 
   const handleConnectMetamask = async () => {
     try {
@@ -51,7 +54,6 @@ const AccountPage = () => {
       console.error('Error connecting to Metamask:', error.message);
     }
   };
-
   useEffect(() => {
     const checkMetamaskConnection = async () => {
       try {
@@ -101,17 +103,9 @@ const AccountPage = () => {
     setTooltipText('Скопировано');
   };
 
-
-  const handleEditBio = () => {
-    setIsEditingBio(true);
-  };
-
-  const handleSaveBio = () => {
-    console.log("Bio saved:", editedBio);
-
-    setIsEditingBio(false);
-  };
-
+  console.log(store.user.avatar)
+  const imageBuffer = store.avatar;
+  const base64Image = btoa(String.fromCharCode.apply(null, new Uint8Array(imageBuffer)));
   return (
     <div>
       {store.isAuth ? (
@@ -119,7 +113,7 @@ const AccountPage = () => {
           <AvatarContainer>
             <FullWidthImage src={AccountPlaceholder} alt="" />
             <Avatar
-              src={AvatarImage}
+              src={`data:image/png;base64,${base64Image}`}
               variant="square"
               sx={{
                 width: 130,
@@ -150,30 +144,10 @@ const AccountPage = () => {
               </Typography> {store.user.email}</Typography>
               <Typography color="secondary" fontWeight={600} fontSize={23} marginTop={3}>
                 Bio: 
-              </Typography>
-              {isEditingBio ? (
-            <>
-                      <TextField
-                type="text"
-                value={editedBio}
-                onChange={(e) => setEditedBio(e.target.value)}
-                sx={{backgroundColor: "grey"}}
-          />
-              <Button variant="contained" onClick={handleSaveBio}>
-                Save
-              </Button>
-            </>
-          ) : (
-            <Box sx={{display: 'flex'}}>
-              <Typography>{editedBio}</Typography>
-                <Typography
-                  onClick={handleEditBio}
-                  sx={{marginLeft: 1}}
-                >
-                  <EditOutlinedIcon color="primary" /> 
-                </Typography>
-            </Box>
-          )}
+              </Typography> 
+              <Typography> {store.user.bio}</Typography>
+            <ProfileDialog open={isDialogOpen} onClose={handleToggleDialog}/>
+            <Button onClick={handleToggleDialog} variant="outlined">Редактировать профиль</Button>
             </Box>
             <Box sx={{ marginTop: 3 }}>
               <Box sx={{ display: "flex", gap: 2 }}>

@@ -57,6 +57,7 @@ const theme = createTheme({
       styleOverrides: {
         root: {
           borderRadius: '20px',
+          backgroundColor: 'white'
         },
       }
     },
@@ -90,6 +91,22 @@ const theme = createTheme({
         },
       },
     },
+    MuiDialog: {
+      styleOverrides: {
+        paper: {
+          borderRadius: '20px',
+          backgroundColor: '#2B2B2B',
+          padding: 20
+        },
+      },
+    },
+    MuiDialogContentText: {
+      styleOverrides: {
+        root: {
+          color: 'white'
+        }
+      }
+    }
   },
 });
 

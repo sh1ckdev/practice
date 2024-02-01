@@ -65,10 +65,11 @@ const Header = () => {
                       padding: "10px 30px",
                       display: "flex",
                       gap: "8px",
+                      textTransform: 'none'
                     }}
                   >
                     <PersonOutlineIcon />
-                    Profile {store.user.username}
+                    Profile
                   </Button>
                 </MuiLink>
                 <MuiLink sx={{textDecoration: 'none'}} to="/register">

@@ -17,13 +17,21 @@ app.use(cors({
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE', 
   optionsSuccessStatus: 204,
 }));
+
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', 'http://localhost:3000');
+  res.header('Access-Control-Allow-Credentials', true);
+  res.header('Access-Control-Allow-Methods', 'GET,HEAD,PUT,PATCH,POST,DELETE');
+  next();
+});
+
 app.use('/api', router)
 app.use(errorMiddleware)
 
 const start = async () => {
   try {
     await mongoose.connect(process.env.DB_URL, {
-      useNewUrlParser: true, useUnifiedTopology: true
+      
     });
     
 

@@ -7,7 +7,6 @@ import { AuthResponse } from "../models/response/AuthResponse";
 import { IReviews } from "../models/IReview";
 import ReviewService from "../services/ReviewService";
 import { runInAction } from 'mobx';
-// import { ReviewResponse } from './../models/response/ReviewResponse';
 
 
 export default class Store {
@@ -28,17 +27,15 @@ export default class Store {
     setUser(user: IUser) { 
         this.user = user;
     }
-
     async login(username: string, password: string, navigate: () => void) {
         try {
             const response = await AuthService.login(username, password);
-            console.log(response)
             localStorage.setItem('token', response.data.accessToken);
             this.setAuth(true);
             this.setUser(response.data.user);
             if (this.isAuth) {
                 navigate(); 
-              }
+            }
         } catch (e) {
         }
     }
@@ -61,6 +58,17 @@ export default class Store {
             this.setAuth(false);
             this.setUser({} as IUser);
         } catch (e) {
+        }
+    }
+
+    async updateProfile(userId: string, fieldsToUpdate: object){
+        try {
+            console.log(userId, fieldsToUpdate)
+            const response = await AuthService.updateProfile(userId, fieldsToUpdate)
+            this.setUser(response.data.user)
+            return response.data;
+        } catch (error) {
+            
         }
     }
 

@@ -60,6 +60,50 @@ class UserService {
         await tokenService.saveToken(userDto.id, tokens.refreshToken);
         return {...tokens, user: userDto}
     }
+
+    async updateProfile(fieldsToUpdate, userId) {
+        try {
+            const currentUser = await UserModel.findById(userId);
+    
+            if (!currentUser) {
+                throw ApiError.NotFound('Пользователь не найден');
+            }
+    
+            const { username, password, email, bio, avatar } = fieldsToUpdate;
+            const updatedFields = {
+                username: (username && username.trim()) || currentUser.username,
+                email: (email && email.trim()) || currentUser.email,
+                bio: (bio && bio.trim()) || currentUser.bio,
+                avatar: (avatar && avatar.trim()) || currentUser.avatar,
+            };
+            
+
+            const newUsername = updatedFields.username;
+    
+            if (newUsername && newUsername !== currentUser.username) {
+                const existingUser = await UserModel.findOne({ username: newUsername });
+    
+                if (existingUser) {
+                    throw ApiError.BadRequest('Никнейм уже используется');
+                }
+            }
+
+            if (password) {
+                const hashedPassword = await bcrypt.hash(password, 3); 
+                updatedFields.password = hashedPassword;
+            }
+    
+            Object.assign(currentUser, updatedFields);
+    
+            await currentUser.save();
+    
+            const userDto = new UserDto(currentUser);
+            return userDto 
+        } catch (error) {
+            throw error;
+        }
+    }
+    
 }
 
 module.exports = new UserService();

@@ -8,7 +8,6 @@ class ReviewService {
             const review = await ReviewModel.create({ username, text, rating });
             return review;
         } catch (error) {
-            console.error('Ошибка при добавлении отзыва:', error);
             throw ApiError.BadRequest('Ошибка при добавлении отзыва');
         }
     }

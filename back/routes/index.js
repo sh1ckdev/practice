@@ -25,6 +25,7 @@ router.post(
 );
 router.delete('/reviews/:reviewId', authMiddleware, reviewController.deleteReview)
 router.get('/reviews', reviewController.getAllReviews);
+router.put('/updateProfile/:userId', authMiddleware, userController.updateProfile)
 
 
 module.exports = router

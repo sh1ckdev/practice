@@ -23,7 +23,7 @@ class ReviewController {
     async deleteReview(req, res, next) {
         try {
             const { username } = req.user;
-            const { reviewId } = req.params;
+            const { reviewId } = req.params;   
             const existingReview = await reviewService.getReviewById(reviewId);
             if (!existingReview) {
                 return next(ApiError.NotFound('Отзыв не найден'));
