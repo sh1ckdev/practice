@@ -9,21 +9,14 @@ const errorMiddleware = require('./middlewares/error-middleware')
 const PORT = process.env.PORT || 5000;
 const app = express();
 
-app.use(express.json())
-app.use(cookieParser());
 app.use(cors({
   origin: 'http://localhost:3000', 
   credentials: true, 
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE', 
   optionsSuccessStatus: 204,
 }));
-
-app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', 'http://localhost:3000');
-  res.header('Access-Control-Allow-Credentials', true);
-  res.header('Access-Control-Allow-Methods', 'GET,HEAD,PUT,PATCH,POST,DELETE');
-  next();
-});
+app.use(express.json())
+app.use(cookieParser());
 
 app.use('/api', router)
 app.use(errorMiddleware)
